@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<style></style>
+<script></script>
+<head>
+    
+</head>
+<body>
+    <h1>Create new short link</h1>
+    <input type="text" id="original-url"/><input type="button" value="Submit" onclick="createShortLink()">
+    <div id="entered-short-link"></div>
+    <div id="new-short-link"></div>
+    <h1>Resolve a short link</h1>
+    <input type="text"  id="shortened-url"/><input type="button" value=" Submit" onclick="createShortLink">
+    <div id="resolved-url"></div>
+    <script>
+
+        // TODO: Sanitize 
+        // XSS
+        // SQLi
+
+        const hostname = "https://localhost:8000"
+        const version = 'v1'
+
+        const shortenAPIURL = {
+            "url": `${hostname}/api/${version}/shorten`,
+            "method": "POST"
+        }
+
+        const resolveAPIURL = {
+            "url": `${hostname}/api/${version}/resolve`,
+            "method": "GET"
+        }
+
+        function processNewShortLink(){
+
+        }
+
+        function createAnchorTag(url, text){
+            const anchorTagObject = document.createElement("a")
+            anchorTagObject.href = url
+            anchorTagObject.text = text
+            anchorTagObject.rel = "nofollow" // SEO
+            return anchorTagObject;
+        }
+
+        function createShortLink(){
+            const originalURL = document.getElementById("original-url").value
+            const enterSLDiv = document.getElementById("entered-short-link")
+            const retrievedSLDiv = document.getElementById("new-short-link")
+
+            const originalURLAnchorTag = createAnchorTag(originalURL, originalURL)
+            enterSLDiv.innerHTML = ''
+            enterSLDiv.replaceChildren(originalURLAnchorTag)
+
+            // const shortenedURL = apiCall(originalURL);
+            const shortenedURL = "https://google.com"
+
+            const shortenedURLAnchorTag = createAnchorTag(shortenedURL, shortenedURL)
+            retrievedSLDiv.innerHTML = ''
+            retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)   
+        }
+
+        function apiCall(url, parameters, requestType){
+
+
+
+            // var xmlHttp = new XMLHttpRequest();
+            // xmlHttp.open( "GET", url, false ); // false for synchronous request
+            // xmlHttp.send( null );
+            // return xmlHttp.responseText;
+        }
+    </script>
+</body>
