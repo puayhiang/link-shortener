@@ -10,7 +10,7 @@
     <div id="entered-short-link"></div>
     <div id="new-short-link"></div>
     <h1>Resolve a short link</h1>
-    <input type="text"  id="shortened-url"/><input type="button" value=" Submit" onclick="createShortLink">
+    <input type="text"  id="shortened-url"/><input type="button" value=" Submit" onclick="resolveShortLink()">
     <div id="resolved-url"></div>
     <script>
 
@@ -18,7 +18,8 @@
         // XSS
         // SQLi
 
-        const hostname = "https://localhost:8000"
+        // const hostname = "https://localhost:8000"
+        const hostname = ""
         const version = 'v1'
 
         const shortenAPIURL = {
@@ -30,11 +31,7 @@
             "url": `${hostname}/api/${version}/resolve`,
             "method": "GET"
         }
-
-        function processNewShortLink(){
-
-        }
-
+        
         function createAnchorTag(url, text){
             const anchorTagObject = document.createElement("a")
             anchorTagObject.href = url
@@ -51,23 +48,41 @@
             const originalURLAnchorTag = createAnchorTag(originalURL, originalURL)
             enterSLDiv.innerHTML = ''
             enterSLDiv.replaceChildren(originalURLAnchorTag)
+            const url = shortenAPIURL.url + "?url=" + originalURL;
 
-            // const shortenedURL = apiCall(originalURL);
-            const shortenedURL = "https://google.com"
+            fetch(url).then(function(response) {
+                return response.json();
+            }).then(function(jsonData) {
+                const shortenedURL = "/resolve/" + jsonData.url
 
-            const shortenedURLAnchorTag = createAnchorTag(shortenedURL, shortenedURL)
-            retrievedSLDiv.innerHTML = ''
-            retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)   
+                const shortenedURLAnchorTag = createAnchorTag(shortenedURL, shortenedURL)
+                retrievedSLDiv.innerHTML = ''
+                retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)   
+
+            }).catch(function(e) {
+                alert(e)
+            });
+
         }
 
-        function apiCall(url, parameters, requestType){
+        function resolveShortLink(){
+            const originalURL = document.getElementById("shortened-url").value
+            const retrievedSLDiv = document.getElementById("resolved-url")
 
+            const url = resolveAPIURL.url + "?hash=" + originalURL;
 
+            fetch(url).then(function(response) {
+                return response.json();
+            }).then(function(jsonData) {
+                const shortenedURL = jsonData.url
+                const shortenedURLAnchorTag = createAnchorTag(shortenedURL, shortenedURL)
+                retrievedSLDiv.innerHTML = ''
+                retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)   
 
-            // var xmlHttp = new XMLHttpRequest();
-            // xmlHttp.open( "GET", url, false ); // false for synchronous request
-            // xmlHttp.send( null );
-            // return xmlHttp.responseText;
+            }).catch(function(e) {
+                alert(e)
+            });
+
         }
     </script>
 </body>

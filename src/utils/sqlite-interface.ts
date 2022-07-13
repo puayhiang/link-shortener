@@ -5,9 +5,9 @@ import { generateHash } from "../utils/hash";
 
 let db: any;
 
-async function openDB() {
+export async function openDB() {
   db = await open({
-    filename: "link-shortener.db",
+    filename: "link-shortener.sqlite",
     driver: sqlite3.cached.Database,
   });
 }
@@ -26,26 +26,7 @@ const createDB = async () => {
     )`);
 };
 
-const createNewShortenedURL = async (url: string) => {
-  let uniqueHash = false;
-  let hash = url;
-  const epoch = Math.round(Date.now() / 1000); // seconds epoch time
-  while (!uniqueHash) {
-    hash = generateHash(hash);
-    const retrievedURL = await retrieveHashIfExists(hash);
-    if (retrievedURL === null) {
-      uniqueHash = true;
-    } else if (retrievedURL === url) {
-      // URL already exists
-      break;
-    } else {
-      uniqueHash = await insertURLtoDB(hash, url, epoch);
-    }
-  }
-  return hash;
-};
-
-const insertURLtoDB = async (hash: string, url: string, epoch: number) => {
+export const insertURLtoDB = async (hash: string, url: string, epoch: number) => {
   try {
     const results = await db.run(
       `INSERT INTO shortened 
@@ -57,6 +38,7 @@ const insertURLtoDB = async (hash: string, url: string, epoch: number) => {
       epoch
     );
   } catch (e: any) {
+    console.log(e)
     if (e.errno === 19) {
       // Hash exists
       return false;
@@ -65,7 +47,24 @@ const insertURLtoDB = async (hash: string, url: string, epoch: number) => {
   return true;
 };
 
-const retrieveHashIfExists = async (
+export const updateAccessCounter = async (
+  hash: string
+) => {
+  // SET TableField = TableField + 1
+  // UPDATE TableName SET TableField = TableField + 1 WHERE SomeFilterField = @ParameterID
+  // const result = await db.get(
+    
+  //   `SELECT shortened.url FROM shortened WHERE hash = :hash`,
+  //   { ":hash": hash }
+  // );
+  // if (result === undefined) {
+  //   return undefined;
+  // } else {
+  //   return result.url;
+  // }
+}
+
+export const retrieveURLIfExists = async (
   hash: string
 ): Promise<string | undefined> => {
   const result = await db.get(
@@ -79,18 +78,18 @@ const retrieveHashIfExists = async (
   }
 };
 
-const closeDB = async () => {
+export const closeDB = async () => {
   await db.close();
 };
 
-module.exports = { createNewShortenedURL, retrieveHashIfExists, closeDB, openDB };
+// module.exports = { retrieveURLIfExists, updateAccessCounter, closeDB, openDB };
 
 const seed = async (): Promise<void> => {
   await openDB();
   await createDB();
-  console.log(await createNewShortenedURL("http://google.com"));
+  console.log(await insertURLtoDB("qiI5wXYJsh66A0xWSvh48+7IzoPtDydoWX0rwv1OTaU==","http://google.com",1));
   console.log(
-    await retrieveHashIfExists("qiI5wXYJsh66A0xWSvh48+7IzoPtDydoWX0rwv1OTaU==")
+    await retrieveURLIfExists("qiI5wXYJsh66A0xWSvh48+7IzoPtDydoWX0rwv1OTaU==")
   );
   await closeDB();
 };
