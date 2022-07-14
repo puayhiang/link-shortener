@@ -18,25 +18,25 @@
         // XSS
         // SQLi
 
-        // const hostname = "https://localhost:8000"
+        // const hostname = "https://localhost:3000"
         const hostname = ""
         const version = 'v1'
 
         const shortenAPIURL = {
             "url": `${hostname}/api/${version}/shorten`,
-            "method": "POST"
+            // "method": "POST"
         }
 
         const resolveAPIURL = {
             "url": `${hostname}/api/${version}/resolve`,
-            "method": "GET"
+            // "method": "GET"
         }
         
         function createAnchorTag(url, text){
             const anchorTagObject = document.createElement("a")
             anchorTagObject.href = url
             anchorTagObject.text = text
-            anchorTagObject.rel = "nofollow" // SEO
+            anchorTagObject.rel = "nofollow" // #SEO
             return anchorTagObject;
         }
 
@@ -53,6 +53,10 @@
             fetch(url).then(function(response) {
                 return response.json();
             }).then(function(jsonData) {
+                if(typeof jsonData["error"] === 'string'){
+                    alert(jsonData.error)
+                    return;
+                }
                 const shortenedURL = "/resolve/" + jsonData.url
 
                 const shortenedURLAnchorTag = createAnchorTag(shortenedURL, shortenedURL)
@@ -74,6 +78,11 @@
             fetch(url).then(function(response) {
                 return response.json();
             }).then(function(jsonData) {
+
+                if(typeof jsonData["error"] === 'string'){
+                    alert(jsonData.error)
+                }
+                
                 const shortenedURL = jsonData.url
                 const shortenedURLAnchorTag = createAnchorTag(shortenedURL, shortenedURL)
                 retrievedSLDiv.innerHTML = ''

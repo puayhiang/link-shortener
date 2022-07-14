@@ -2,8 +2,9 @@
   "name": "link-shortener",
   "version": "1.0.0",
   "description": "",
-  "main": "backend.js",
+  "main": "dist/backend.js",
   "dependencies": {
+    "auth0": "^2.42.0",
     "sqlite": "^4.1.1",
     "sqlite3": "^5.0.8"
   },
@@ -15,8 +16,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p .",
-    "db": "tsc src/utils/sqlite-interface.ts && node src/utils/sqlite-interface.js",
-    "start": "npm run build -- -w"
+    "db": "npm run build && node dist/utils/sqlite-interface.js",
+    "watch": "npm run build -- -w",
+    "start": "npm run build && node dist/backend.js"
   },
   "author": "",
   "license": "ISC"

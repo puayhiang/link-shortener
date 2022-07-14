@@ -1,14 +1,24 @@
 import * as http from 'http';
+import * as https from 'https';
 import url from 'url';
 import fs from 'fs';
 import { IncomingMessage, ServerResponse } from 'http';
 import { createNewShortenedURL, resolveShortURL } from './utils/shortlink-interface';
-const hostname = '127.0.0.1';
-const port = 3000;
+const hostname = '0.0.0.0';
+
+const http_port = 80;
+const dev_port = 8080;
+const https_port = 443;
+const port = http_port;
 
 // IncomingMessage
 // ServerResponse
 // "url": `${hostname}/api/${version}/shorten`,
+
+// const ssl_certificates = {
+//     key: fs.readFileSync('key.pem'),
+//     cert: fs.readFileSync('cert.pem')
+// };
 
 const routeRequest = async (req: http.IncomingMessage, res: http.ServerResponse) => {
     const requestURL = req.url!;
@@ -42,6 +52,7 @@ const routeRequest = async (req: http.IncomingMessage, res: http.ServerResponse)
     }
 };
 
+// TODO: Vanity URL
 const shorten = async (req: IncomingMessage, res: ServerResponse) => {
     const reqURL = req.url!;
     const queryObject = url.parse(reqURL, true).query;
@@ -62,7 +73,7 @@ const resolve = async (req: IncomingMessage, res: ServerResponse) => {
     const hash = queryObject.hash as string;
     const resolvedURL = await resolveShortURL(hash)
     if(resolvedURL === undefined){
-        res.end("Invalid Short link")
+        res.end(JSON.stringify({"error": "Invalid Short link"}))
     }else{
         res.end(JSON.stringify({"url": resolvedURL}))
     }
@@ -85,6 +96,11 @@ const redirect = async (req: IncomingMessage, res: ServerResponse) => {
 };
 
 const server = http.createServer();
+
+// TODO: HTTPS web host
+// const server = https.createServer();
+// server.setSecureContext(ssl_certificates)
+
 server.on('request', async (req, res) => {
     await routeRequest(req, res);
 });
