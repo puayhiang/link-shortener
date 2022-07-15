@@ -2,3 +2,4 @@ node_modules/
 *.sqlite
 .DS_STORE
 dist/
+TAP.md

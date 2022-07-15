@@ -41,7 +41,10 @@ const routeRequest = async (req: http.IncomingMessage, res: http.ServerResponse)
         await redirect(req, res);
     }else if(requestURL.startsWith("/manage")){
         res.writeHead(200, { 'content-type': 'text/html' })
-        fs.createReadStream('index.html').pipe(res)
+        fs.createReadStream('src/static/manage.html').pipe(res)
+    }else if(requestURL.startsWith("/baller")){
+        res.writeHead(200, { 'content-type': 'text/html' })
+        fs.createReadStream('src/static/football.html').pipe(res)
     }else if(requestURL.startsWith("/")){
         res.writeHead(302, {
             location: '/manage',

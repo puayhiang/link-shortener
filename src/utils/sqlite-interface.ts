@@ -82,8 +82,6 @@ export const closeDB = async () => {
   await db.close();
 };
 
-// module.exports = { retrieveURLIfExists, updateAccessCounter, closeDB, openDB };
-
 const seed = async (): Promise<void> => {
   await openDB();
   await createDB();
