@@ -1,5 +1,6 @@
 "use strict";
 
+// Currently Unused
 // modified FROM https://github.com/base62/base62.js
 
 var CHARSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");

@@ -10,7 +10,6 @@ import {
 export const valid_characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
 
 const checkValidHashFormat = (hash: string) => {
-  return true;
     return /^[A-Za-z0-9 -]*$/.test(hash);
 }
 

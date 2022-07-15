@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<style></style>
-<script></script>
+<html lang="en">
+
 <head>
-    
+    <title>Link Shortener - Manage</title>
 </head>
+
 <body>
     <h1>Create new short link</h1>
-    <input type="text" id="original-url"/><input type="button" value="Submit" onclick="createShortLink()">
+    <input type="text" id="original-url" /><input type="button" value="Submit" onclick="createShortLink()">
     <div id="entered-short-link"></div>
     <div id="new-short-link"></div>
     <h1>Resolve a short link</h1>
-    <input type="text"  id="shortened-url"/><input type="button" value=" Submit" onclick="resolveShortLink()">
+    <input type="text" id="shortened-url" /><input type="button" value=" Submit" onclick="resolveShortLink()">
     <div id="resolved-url"></div>
     <script>
 
@@ -31,8 +32,8 @@
             "url": `${hostname}/api/${version}/resolve`,
             // "method": "GET"
         }
-        
-        function createAnchorTag(url, text){
+
+        function createAnchorTag(url, text) {
             const anchorTagObject = document.createElement("a")
             anchorTagObject.href = url
             anchorTagObject.text = text
@@ -40,7 +41,7 @@
             return anchorTagObject;
         }
 
-        function createShortLink(){
+        function createShortLink() {
             const originalURL = document.getElementById("original-url").value
             const enterSLDiv = document.getElementById("entered-short-link")
             const retrievedSLDiv = document.getElementById("new-short-link")
@@ -50,10 +51,10 @@
             enterSLDiv.replaceChildren(originalURLAnchorTag)
             const url = shortenAPIURL.url + "?url=" + originalURL;
 
-            fetch(url).then(function(response) {
+            fetch(url).then(function (response) {
                 return response.json();
-            }).then(function(jsonData) {
-                if(typeof jsonData["error"] === 'string'){
+            }).then(function (jsonData) {
+                if (typeof jsonData["error"] === 'string') {
                     alert(jsonData.error)
                     return;
                 }
@@ -61,37 +62,39 @@
 
                 const shortenedURLAnchorTag = createAnchorTag(shortenedURL, shortenedURL)
                 retrievedSLDiv.innerHTML = ''
-                retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)   
+                retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)
 
-            }).catch(function(e) {
+            }).catch(function (e) {
                 alert(e)
             });
 
         }
 
-        function resolveShortLink(){
+        function resolveShortLink() {
             const originalURL = document.getElementById("shortened-url").value
             const retrievedSLDiv = document.getElementById("resolved-url")
 
             const url = resolveAPIURL.url + "?hash=" + originalURL;
 
-            fetch(url).then(function(response) {
+            fetch(url).then(function (response) {
                 return response.json();
-            }).then(function(jsonData) {
+            }).then(function (jsonData) {
 
-                if(typeof jsonData["error"] === 'string'){
+                if (typeof jsonData["error"] === 'string') {
                     alert(jsonData.error)
                 }
-                
+
                 const shortenedURL = jsonData.url
                 const shortenedURLAnchorTag = createAnchorTag(shortenedURL, shortenedURL)
                 retrievedSLDiv.innerHTML = ''
-                retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)   
+                retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)
 
-            }).catch(function(e) {
+            }).catch(function (e) {
                 alert(e)
             });
 
         }
     </script>
 </body>
+
+</html>
