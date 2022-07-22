@@ -1,8 +1,6 @@
 import * as sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
-import { generateHash } from "../utils/hash";
-
 let db: any;
 
 export async function openDB() {
@@ -78,6 +76,20 @@ export const retrieveURLIfExists = async (
   }
 };
 
+export const deleteURL = async (
+  hash: string
+): Promise<boolean | undefined> => {
+  const result = await db.run(
+    `DELETE FROM shortened WHERE hash = :hash`,
+    { ":hash": hash }
+  );
+  if (result === undefined) {
+    return undefined;
+  } else {
+    return result.changes === 1;
+  }
+};
+
 export const closeDB = async () => {
   await db.close();
 };
@@ -88,6 +100,9 @@ const seed = async (): Promise<void> => {
   console.log(await insertURLtoDB("qiI5wXYJsh66A0xWSvh48+7IzoPtDydoWX0rwv1OTaU==","http://google.com",1));
   console.log(
     await retrieveURLIfExists("qiI5wXYJsh66A0xWSvh48+7IzoPtDydoWX0rwv1OTaU==")
+  );
+  console.log(
+    await deleteURL("qiI5wXYJsh66A0xWSvh48+7IzoPtDydoWX0rwv1OTaU==")
   );
   await closeDB();
 };

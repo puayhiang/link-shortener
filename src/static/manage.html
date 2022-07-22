@@ -13,6 +13,9 @@
     <h1>Resolve a short link</h1>
     <input type="text" id="shortened-url" /><input type="button" value=" Submit" onclick="resolveShortLink()">
     <div id="resolved-url"></div>
+    <h1>Delete a short link</h1>
+    <input type="text" id="shortened-delete-url" /><input type="button" value=" Submit" onclick="deleteShortLink()">
+    <div id="delete-status"></div>
     <script>
 
         // TODO: Sanitize 
@@ -30,6 +33,11 @@
 
         const resolveAPIURL = {
             "url": `${hostname}/api/${version}/resolve`,
+            // "method": "GET"
+        }
+
+        const deleteAPIURL = {
+            "url": `${hostname}/api/${version}/delete`,
             // "method": "GET"
         }
 
@@ -89,6 +97,32 @@
                 retrievedSLDiv.innerHTML = ''
                 retrievedSLDiv.replaceChildren(shortenedURLAnchorTag)
 
+            }).catch(function (e) {
+                alert(e)
+            });
+
+        }
+
+        function deleteShortLink() {
+            const originalURL = document.getElementById("shortened-delete-url").value
+            const retrievedSLDiv = document.getElementById("delete-status")
+
+            const url = deleteAPIURL.url + "?hash=" + originalURL;
+
+            fetch(url).then(function (response) {
+                return response.json();
+            }).then(function (jsonData) {
+
+                if (typeof jsonData["error"] === 'string') {
+                    alert(jsonData.error)
+                }
+
+                let responseString = ''
+                if(jsonData.success){
+                    retrievedSLDiv.innerHTML = 'Delete Short Link Successful'
+                } else {
+                    retrievedSLDiv.innerHTML = 'Delete Short Link Failed'
+                }
             }).catch(function (e) {
                 alert(e)
             });

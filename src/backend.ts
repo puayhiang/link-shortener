@@ -5,6 +5,7 @@ import fs from "fs";
 import { IncomingMessage, ServerResponse } from "http";
 import {
   createNewShortenedURL,
+  deleteShortURL,
   resolveShortURL,
 } from "./utils/shortlink-interface";
 const hostname = "0.0.0.0";
@@ -12,7 +13,7 @@ const hostname = "0.0.0.0";
 const http_port = 80;
 const dev_port = 8080;
 const https_port = 443;
-const port = http_port;
+const port = dev_port;
 
 // IncomingMessage
 // ServerResponse
@@ -33,6 +34,8 @@ const routeRequest = async (
       shorten(req, res);
     } else if (requestURL.startsWith("/api/v1/resolve")) {
       resolve(req, res);
+    } else if (requestURL.startsWith("/api/v1/delete")) {
+      deleteLink(req, res);
     } else {
       const versionInfo = {
         version: 1,
@@ -73,6 +76,22 @@ const routeRequest = async (
     res.end("Invalid Request");
   }
 };
+
+const deleteLink = async (req: IncomingMessage, res: ServerResponse) => {
+  const reqURL = req.url!;
+  const queryObject = url.parse(reqURL, true).query;
+  if (typeof queryObject["hash"] !== "string") {
+    res.end(JSON.stringify({ error: "Invalid hash" }));
+  }
+  const hash = queryObject.hash as string;
+  const status = await deleteShortURL(hash);
+  if (status === undefined) {
+    res.end(JSON.stringify({ error: "Invalid Short link" }));
+  } else {
+    res.end(JSON.stringify({ success: status }));
+  }
+  return;
+}
 
 // TODO: Vanity URL
 const shorten = async (req: IncomingMessage, res: ServerResponse) => {
