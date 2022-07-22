@@ -4,6 +4,7 @@ import {
   retrieveURLIfExists,
   updateAccessCounter,
   openDB,
+  deleteURL,
 } from "./sqlite-interface";
 
 // Use Hashtable ?
@@ -52,5 +53,22 @@ export const resolveShortURL = async (
   } else {
     await updateAccessCounter(hash);
     return retrievedURL;
+  }
+};
+
+export const deleteShortURL = async (
+  hash: string
+): Promise<undefined | boolean> => {
+    await openDB();
+   const validHash =  checkValidHashFormat(hash);
+   if(!validHash){
+    return undefined;
+   }
+  const retrievedURL = await retrieveURLIfExists(hash);
+  if (retrievedURL === null) {
+    return undefined;
+  } else {
+    // return true;
+    return await deleteURL(hash);
   }
 };
